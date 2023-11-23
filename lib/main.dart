@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart';
-import 'package:video_player_rtmp_ext/widget/video_player_rtmp_ext.dart';
 import 'package:dpad_container/dpad_container.dart';
+import 'package:fijkplayer/fijkplayer.dart';
 void main() => runApp(MaterialApp(home:MainPage()));
 List prog=[
   ["cctv5","http://39.134.24.162/dbiptv.sn.chinamobile.com/PLTV/88888890/224/3221225761/index.m3u8"],
@@ -54,9 +53,9 @@ class MainPage extends StatefulWidget
               Padding(padding:EdgeInsets.all(20),child:Padding(
                 padding: const EdgeInsets.all(20.0),
                 child: DpadContainer (
-                  onFocus: (bool isFoucsed)=>setState(() {
+                    onFocus: (bool isFoucsed)=>setState(() {
 
-                  }),
+                    }),
                     onClick: (){Navigator.push(
                         context,
                         MaterialPageRoute(
@@ -72,24 +71,29 @@ class MainPage extends StatefulWidget
 
 }
 class Page extends StatelessWidget{
+  final FijkPlayer player = FijkPlayer();
   String uri;
   Page({required this.uri});
   @override
+  void initState() {
+    //super.initState();
+    player.setDataSource(uri, autoPlay: true);
+  }
+
+  @override
   Widget build(BuildContext context) {
-    IJKPlayerController controller =  IJKPlayerController.network(uri.toString());
     // TODO: implement build
     return DpadContainer(
-      onFocus: (int){controller.stop();Navigator.pop(context);},
-      onClick: (){controller.stop();Navigator.pop(context);},
+      onFocus: (int){player.stop();Navigator.pop(context);},
+      onClick: (){player.stop();Navigator.pop(context);},
       child: Scaffold(
-        body:VideoPlayerRtmpExtWidget(
-          controller: controller,
-          viewCreated: (IJKPlayerController _){
-            controller.play();
-          },
-        ) ,
-
-      ),
+        //body:VideoPlayerRtmpExtWidget(
+        //controller: controller,
+        // viewCreated: (IJKPlayerController _){
+        //   controller.play();
+        //  },
+        body: FijkView(player: player),
+      ) ,
     );
     throw UnimplementedError();
   }
